@@ -1,6 +1,6 @@
 {
   "checked_at": "2026-11-25T06:47:56Z",
-  "attempted_at": "2026-11-25T06:50:11Z",
+  "attempted_at": "2026-11-25T12:48:10Z",
   "state": "partial",
   "failed_count": 3,
   "pending_count": 2,
@@ -12,31 +12,31 @@
     2026,
     2027
   ],
-  "sha256": "c6ffec29319f17d4ac48ba7a88c772cf01f266596e1db06903cb475f677df2d0",
+  "sha256": "b0c58801e4531a11b6d01eaaa9d8b754d95b793401c34ec9fda1f968c61e6cf6",
   "ports": [
     {
       "code": "VAN",
       "season": 2027,
       "count": 369,
       "status": "ok",
-      "checked_at": "2026-11-25T06:50:08Z",
-      "attempted_at": "2026-11-25T06:50:08Z"
+      "checked_at": "2026-11-25T12:48:07Z",
+      "attempted_at": "2026-11-25T12:48:07Z"
     },
     {
       "code": "VIC",
       "season": 2027,
       "count": 320,
       "status": "ok",
-      "checked_at": "2026-11-25T06:50:08Z",
-      "attempted_at": "2026-11-25T06:50:08Z"
+      "checked_at": "2026-11-25T12:48:07Z",
+      "attempted_at": "2026-11-25T12:48:07Z"
     },
     {
       "code": "JNU",
       "season": 2027,
       "count": 699,
       "status": "ok",
-      "checked_at": "2026-11-25T06:50:08Z",
-      "attempted_at": "2026-11-25T06:50:08Z"
+      "checked_at": "2026-11-25T12:48:08Z",
+      "attempted_at": "2026-11-25T12:48:08Z"
     },
     {
       "code": "HAL",
@@ -44,7 +44,7 @@
       "count": 0,
       "status": "unavailable",
       "checked_at": null,
-      "attempted_at": "2026-11-25T06:50:08Z"
+      "attempted_at": "2026-11-25T12:48:08Z"
     },
     {
       "code": "CHT",
@@ -52,7 +52,7 @@
       "count": 0,
       "status": "pending",
       "checked_at": null,
-      "attempted_at": "2026-11-25T06:50:09Z"
+      "attempted_at": "2026-11-25T12:48:09Z"
     },
     {
       "code": "SJN",
@@ -60,7 +60,7 @@
       "count": 0,
       "status": "pending",
       "checked_at": null,
-      "attempted_at": "2026-11-25T06:50:10Z"
+      "attempted_at": "2026-11-25T12:48:09Z"
     },
     {
       "code": "SYD",
@@ -68,7 +68,7 @@
       "count": 90,
       "status": "retained",
       "checked_at": "2026-11-25T06:47:56Z",
-      "attempted_at": "2026-11-25T06:50:11Z"
+      "attempted_at": "2026-11-25T12:48:10Z"
     },
     {
       "code": "LOU",
@@ -76,7 +76,7 @@
       "count": 6,
       "status": "retained",
       "checked_at": "2026-11-25T06:47:59Z",
-      "attempted_at": "2026-11-25T06:50:11Z"
+      "attempted_at": "2026-11-25T12:48:10Z"
     }
   ]
 }
