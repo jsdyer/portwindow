@@ -1,179 +1,52 @@
-# CoolCode browser tool template
+# Port Window
 
-A starting point for independent tools at `coolcode.ca/<repo>/`: a working local-text
-example, responsive UI, Python standard-library build, Node tests, PR checks and Pages
-publication. No npm install is needed.
-
-## Using the example
+[Open Port Window](https://coolcode.ca/portwindow/) · Published cruise schedules with personal planning buffers.
 
 <!-- coolcode:guide -->
-The first occurrence of each trimmed line keeps its place. Compare the output with the original text before copying the result.
+Choose Vancouver, Victoria or Juneau, search any vessel in the source schedule and filter a date range. The daily calendar counts scheduled entries and shows peak overlap among entries with both times. It does not estimate crowds, passengers or live ship positions.
+
+Set your own minutes after arrival and before departure to see a personal planning window. Your cruise operator decides disembarkation and all-aboard times; verify these directly. Missing times remain unknown. A 24:00 departure is midnight at the end of that date. Separate overnight entries are not silently joined.
+
+Mark favourites, explicitly save them on this device and export the filtered complete intervals as a calendar file. The export includes published times and source links; it does not turn your personal buffers into official deadlines. A capture selector preserves earlier source coverage when a schedule changes, and the changes view records observed additions, removals and time changes.
+
+Schedules are checked daily against Cruise Line Agencies of Alaska's public PDFs. The checked date, PDF edition and sailing dates have different meanings. Open the original PDF linked from each entry and reconfirm with your operator before travel.
 <!-- /coolcode:guide -->
 
-For a real tool, replace this paragraph with one or two plain-text sentences
-about an example, a limit or how to interpret the results. Keep the source,
-coverage, refresh behaviour and a worked example in this README as appropriate.
-When updating a tool, revise any details its behaviour has changed and keep the
-homepage's shorter data-source sentence in `tool.json` accurate.
-The hub imports the marked note into the catalogue README.
+## Build and check
 
-## One-time template setup
+No paid service or API key is required. Python 3.12+, PyMuPDF 1.26.6 for collection/tests and Node 24 are used in CI.
 
-Enable **Settings → General → Template repository** here. This repository does not
-need Pages enabled: its workflow builds/tests but intentionally skips deployment.
-New copies also skip deployment until `scripts/init.py` sets the tool ID to match
-their repository name. This lets you create the repo before configuring Pages.
+    python3 -m pip install -r scripts/requirements.txt
+    python3 scripts/refresh.py
+    node --test tests/*.test.mjs
+    python3 -m unittest discover -s tests -v
+    python3 scripts/build.py
+    python3 -m http.server 8000 --directory dist
 
-## Start a new tool
+The static builder is offline. Browser checks use tests/browser-requirements.txt and CHROMIUM_PATH; CI uses the installed google-chrome on Ubuntu 24.04. Do not commit dist.
 
-1. Select **Use this template → Create a new repository**, choose owner `jsdyer`,
-   a unique lowercase name such as `my-tool`, and public visibility.
-2. Clone the new repository. Use Python 3.12+ and Node 24+.
-3. Set the identity, using a slug that matches the repository name:
+## Sources and collection
 
-```sh
-python3 scripts/init.py my-tool --title "My Tool" --description "Describe what this tool does."
-```
+The [CLAA 2027 schedule index](https://claalaska.com/?page_id=1250) links the original calendars. The initial release covers 369 Vancouver, 320 Victoria and 699 Juneau entries in the October 2, 2026 editions; these are data observations, not assumed future totals. Cruise Line Agencies of Alaska owns the original publications. This application presents normalized factual dates/times with attribution and page links and does not mirror PDF files or imply endorsement. No blanket open-data licence is claimed.
 
-Review the category, tags and icon in `tool.json`. `access: "browser"` tells the main
-catalogue that the tool works immediately without installation. `--owner` supports a different
-GitHub owner, but only projects owned by `jsdyer` inherit the CoolCode domain.
+The collector checks robots.txt, discovers each reviewed port's PDF from the index, verifies port/year/weekday alignment, reads positioned calendar blocks and matches time positions around the separator. It rejects ambiguous blocks, unexpected count drops, malformed files and access errors. Blank times remain null. Ship labels retain source abbreviations. ISO UTC calendar fields are derived from each port's IANA timezone, including date rollover at 24:00.
 
-4. Replace the example in `web/` and its tests. Update the privacy explanation,
-   source attribution and README to describe the real tool.
-5. Test and preview:
+A failed collection preserves the previous good files. The full capture is web/data/index.json; the small web/data/status.json probe contains the successful checked_at, entry count, port count, season and capture hash. Checked timestamps advance only after all configured sources validate. Source editions do not advance merely because a collector ran.
 
-```sh
-node --test tests/*.test.mjs
-python3 -m unittest discover -s tests -v
-python3 scripts/build.py
-python3 -m http.server 8000 --directory dist
-```
-
-Open `http://localhost:8000/`. The example trims lines, skips blanks and removes exact
-duplicates, preserving first-seen order and capitalization. It processes the text in tab memory. Update that explanation if your app behaves differently.
-
-CI also tests the browser flow and mobile layout at a project subpath. Replace the
-sample assertions in `tests/browser_smoke.py` when implementing your own UI. To run
-that check locally (optional for ordinary preview):
-
-```sh
-python3 -m venv .venv
-. .venv/bin/activate
-python3 -m pip install -r tests/browser-requirements.txt
-python3 -m playwright install --with-deps chromium
-python3 tests/browser_smoke.py
-```
-
-Playwright is a test-only dependency; the app and its static build do not use it.
+Changed source captures retain up to six older captures, including their original season and port coverage. Observed changes are limited to the latest 100 entries and begin at the first capture. Changed ship names or dates appear as removal/addition. Page-layout changes alone are not reported as changed sailing times.
 
 ## Expand or customize
 
-Every implemented tool should replace this section with its actual configuration
-path and a working example. A small `config.json` can hold default entities,
-query presets, source choices and request limits. Those defaults should be useful
-starting points, while visitors can enter other valid inputs whenever the source
-supports them. Keep provider limits explicit and separate from the starter list.
+Edit config/ports.json to add a port from the official index with its exact code, display name, IANA timezone and a defensible minimum_calls floor. Every configured port must use the reviewed calendar layout and pass parser tests. Search, filters and counts derive from the resulting data; adding a port does not require a new UI list. To move to a new season, review its index URL and update the collector's reviewed URL check, season and test fixtures; do not guess unpublished schedules.
 
-Derive counts, filters and item validation from the current data. Do not require
-exactly the initial number of items. Add a test that expands the configuration,
-and keep historical captures readable when their coverage differs from today's
-watchlist. Display the selected capture date accurately.
+Run collection, tests and build, then commit configuration, code and validated captures to main. Successful main builds deploy through GitHub Actions. No repository secret is needed. Personal search text, planning buffers and favourites remain in the visitor's browser; storage happens only when Save is clicked.
 
-Document which changes need only a normal code push and which also need a data
-refresh. Include the refresh command or exact GitHub workflow and input, followed
-by the publication step. A successful code build need not mean a new collection
-has been fetched. The starter itself has no external collection or refresh.
+## Schedules and integration
 
-## Publish and register
+.github/workflows/pages.yml collects daily at 10:43 UTC, validates, tests the real interface, commits source captures and deploys Pages. Its named source step is “Refresh official CLAA port schedules”. The independent CoolCode server scheduler should dispatch pages.yml daily. A separate allowlisted schedule-guard.yml renews managed schedules; a guard is not evidence of fresh data. The UI warns when a capture is older than 72 hours.
 
-When the actual tool is ready, in the **new tool repository** set **Settings → Pages → Build and deployment →
-Source → GitHub Actions**. Push to `main`, or manually run **Browser tool · Check and
-publish** after enabling Pages. If the initial deployment ran before Pages was enabled,
-enable it and rerun. PRs only check/build and provide a downloadable preview artifact.
+tool.json supplies the hub card, source note and /portwindow/data/status.json freshness probe. Hub registry, guide import, README, audit, sitemap, watchdog collector target and Cloudflare routing are maintained centrally. The existing /portwindow/ Worker route needs no secret or server-side API.
 
-Keep `{{VISIT_COUNTER}}` in the page head and `{{ISSUE_LINK}}` in the footer when replacing the starter UI. The build enables these for initialized CoolCode repositories. The shared counter records aggregate opens on coolcode.ca by public tool ID. Toolbox inputs and URL parameters are excluded. The issue link opens a reporting form with the tool already selected.
+## Coverage limits
 
-Keep app-owned asset paths and module imports relative. Check `https://coolcode.ca/my-tool/`.
-Do not add a CNAME or set `coolcode.ca` as this project's custom domain; the account
-site supplies it. Only successful `main` builds deploy.
-
-After verifying the app, copy the reviewed object from `tool.json` into `data/tools.json`
-in [the main site](https://github.com/jsdyer/jsdyer.github.io). Each tool still builds
-independently. The hub generates the visitor Worker ID list, watchdog targets and sitemap; deploy and verify the affected services before considering the release complete. Update the hub record when listing metadata changes; the hub is the
-authority for discovery. Every change must follow the [mandatory lifecycle](https://github.com/jsdyer/jsdyer.github.io/blob/main/docs/tool-lifecycle.md). App-only changes may leave integrations unchanged, but this must be checked; documentation, source fields, schedules and registration changes also require the hub update.
-
-The main site separates **Use in your browser** from **Install yourself**. An app
-that asks for a file is still a browser tool. Standalone Linux packages should start
-in their own repositories with their own build/release workflow, rather than copying
-this browser-only scaffold. Their hub record uses `access: "install"`, links to an
-installation guide, and includes `requirements`.
-
-## Files
-
-| Path | Purpose |
-| --- | --- |
-| `tool.json` | Page metadata and a ready-to-copy catalogue record |
-| `web/` | HTML, responsive CSS, DOM interactions and separate model logic |
-| `scripts/build.py` | Escape metadata and build `web/` into `dist/` |
-| `scripts/init.py` | Set a new project's identity |
-| `scripts/add_schedule_guard.py` | Add an opt-in guard for explicitly selected scheduled collectors |
-| `tests/` | Application and builder tests |
-| `.github/workflows/pages.yml` | Check PRs and publish successful main builds |
-| `AGENTS.md` | Instructions for future coding work |
-
-Namespace optional storage as `coolcode:<tool-id>:<key>`; CoolCode paths share a
-browser origin. Don't save pasted text/uploads by default. Document external APIs
-and send only the information needed for the selected action. Never embed secrets.
-
-Scheduled refresh is opt-in. Validate source data before deploying, display its date,
-and preserve the last good deployment on failure. Public-repository schedules can
-stop after 60 days without repository activity.
-
-When adding a collector with `on.schedule`, also keep `workflow_dispatch` available
-for the independent Linux server scheduler. Generate a separate schedule guard,
-listing every scheduled collector in the repository:
-
-```sh
-python3 scripts/add_schedule_guard.py --repository jsdyer/my-tool .github/workflows/pages.yml
-```
-
-Replace the repository and workflow paths with the real values. Review the generated
-allowlist, commit `.github/workflows/schedule-guard.yml`, and verify its first push
-run. Re-run the command with the complete list when adding, renaming or removing a
-collector. The guard runs weekly, independently of collector failures, and calls
-GitHub's enable-workflow API for those paths and itself. It restores workflows
-disabled for inactivity and preserves manually disabled workflows. It does not
-fetch data, create dummy commits or change source/check timestamps.
-
-This is an interim mitigation: GitHub does not document active-workflow renewal as
-a permanent exemption, and scheduled runs can be delayed or dropped. Register the
-collector and its freshness expectations in the independent server scheduler too.
-Document its real data check, collection and publication steps in the tool README.
-The starter has no scheduled collector and therefore ships no recurring guard job.
-
-Templates don't propagate future edits automatically. Adopt fixes explicitly and
-consider a versioned reusable workflow once several tools confirm the shared process.
-Choose and add the intended software license before distributing a new project.
-
-## Search metadata
-
-Initialize the page title with a concise task phrase, while keeping the creative
-app name in `--title`:
-
-```sh
-python3 scripts/init.py line-cleaner --title "Line Cleaner" --description "Trim lines and remove exact duplicates in your browser." --search-title "Trim Lines & Remove Duplicates"
-```
-
-The build adds static `WebApplication` JSON-LD, a free CAD offer and social metadata.
-For initialized jsdyer tools it also adds the canonical CoolCode URL. Forks and the
-uninitialized template do not claim a CoolCode canonical. Review the application
-category in `scripts/build.py` when adapting the tool; the starter is a utility.
-Do not invent ratings or reviews. Search markup does not guarantee a rich result.
-
-For a saved public dataset, pass Dataset objects to `add_search_metadata` from the
-app builder, with actual source attribution, licence, coverage and download URLs.
-Derive counts and dates from the same snapshot used by the app and show those details
-on the page. Keep source edition, retrieval and page-build time distinct. Omit an
-unknown source modification date instead of setting it to the current build time.
-Read the hub's `docs/search-discovery.md` for the release checklist.
+This is a planned-call calendar for three selected ports, not a booking engine, live arrival board, itinerary guarantee, fare finder or occupancy service. Unknown intervals are excluded from timed overlap and ICS exports. Entry counts can include separate overnight rows. Calendar files can become outdated and are not subscribed calendars; re-export after checking for updates. Official source failures can delay publication without deleting the last good capture.

@@ -1,21 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cleanLines } from '../web/model.mjs';
-test('trims, removes blanks and preserves first-seen order', () => {
-  assert.deepEqual(cleanLines('  Halifax\nLangley\nHalifax\n\nVancouver  '), {
-    text: 'Halifax\nLangley\nVancouver', count: 3, removed: 1,
-  });
-});
-test('supports Windows and old Mac line endings', () => {
-  assert.equal(cleanLines('a\r\nb\ra').text, 'a\nb');
-});
-test('empty text and whitespace produce an empty result', () => {
-  assert.deepEqual(cleanLines(' \n\t'), { text: '', count: 0, removed: 0 });
-});
-test('preserves case and Unicode', () => {
-  assert.equal(cleanLines('Québec\nquébec\n東京\nQuébec').text, 'Québec\nquébec\n東京');
-});
-test('treats markup as ordinary text', () => {
-  assert.equal(cleanLines('<script>alert(1)</script>\n<script>alert(1)</script>').text, '<script>alert(1)</script>');
-});
-test('rejects non-text input', () => { assert.throws(() => cleanLines(null), TypeError); });
+import {dateOnly,minutes,selectCalls,duration,bufferWindow,clock,dayStats,calendar,validateFavourites} from '../web/model.mjs';
+const call={id:'0123456789abcdef0123',date:'2027-07-01',port:'VAN',ship:'ANY NEW SHIP',arrival:'07:00',departure:'16:00',arrival_at:'2027-07-01T14:00:00Z',departure_at:'2027-07-01T23:00:00Z',page:2};
+test('arbitrary ships and data-derived ports filter without presets',()=>{assert.equal(selectCalls([call,{...call,port:'NEW',ship:'BEYOND THE DEFAULTS'}],{port:'NEW',query:'defaults'}).length,1);assert.equal(selectCalls([call],{from:'2027-07-02'}).length,0);});
+test('date and time validation includes midnight without rollover guesses',()=>{assert.ok(dateOnly('2028-02-29'));assert.ok(!dateOnly('2027-02-29'));assert.equal(minutes('24:00'),1440);assert.throws(()=>minutes('24:01'));assert.equal(duration({...call,arrival:null}),null);assert.equal(duration({...call,arrival:'22:00',departure:'03:00'}),null);});
+test('personal buffers reduce only known same-day intervals',()=>{assert.deepEqual(bufferWindow(call,60,90),{kind:'window',start:480,end:870,minutes:390});assert.equal(bufferWindow(call,500,500).kind,'none');assert.equal(bufferWindow({...call,departure:null},60,90).kind,'unknown');assert.throws(()=>bufferWindow(call,1.5,30));assert.throws(()=>bufferWindow(call,-1,30));assert.match(clock(1440),/next midnight/);});
+test('overlap handles simultaneous departure and arrival and excludes missing times',()=>{assert.deepEqual(dayStats([call,{...call,arrival:'16:00',departure:'20:00'},{...call,arrival:null}]),{count:3,peak:1,unknown:1});assert.equal(dayStats([call,{...call,arrival:'15:00',departure:'18:00'}]).peak,2);});
+test('ICS uses source UTC intervals, escaped text and skips unknown time',()=>{const result=calendar([{...call,ship:'Ship; name,\nnext'}, {...call,arrival:null}],[{code:'VAN',name:'Vancouver',timezone:'America/Vancouver',url:'https://claalaska.com/source.pdf'}],'2026-11-25T00:00:00Z','2026-11-25T01:00:00Z');assert.equal(result.count,1);assert.equal(result.skipped,1);assert.match(result.text,/DTSTART:20270701T140000Z/);assert.match(result.text,/Ship\\; name\\,\\nnext/);assert.ok(result.text.endsWith('\r\n'));for(const line of result.text.split('\r\n'))assert.ok(new TextEncoder().encode(line).length<=75);});
+test('favourites import is bounded and validates identities',()=>{assert.equal(validateFavourites([call.id,call.id]).size,1);assert.throws(()=>validateFavourites(['<script>']));});

@@ -1,16 +1,40 @@
 {
-  "id": "coolcode-tool-template",
-  "title": "CoolCode Tool Starter",
-  "description": "A browser-only example that trims lines and removes exact duplicates.",
-  "category": "security",
-  "tags": ["text", "lines", "duplicates"],
-  "icon": "scan-search",
-  "url": "/coolcode-tool-template/",
-  "source": "https://github.com/jsdyer/coolcode-tool-template",
+  "id": "portwindow",
+  "title": "Port Window",
+  "description": "Explore official cruise schedules, compare port days and plan your own time buffer.",
+  "category": "places",
+  "tags": [
+    "travel",
+    "cruises",
+    "Vancouver",
+    "Victoria",
+    "Alaska",
+    "schedule"
+  ],
+  "icon": "map",
+  "url": "/portwindow/",
+  "source": "https://github.com/jsdyer/portwindow",
   "hosting": "project",
   "access": "browser",
   "data_info": {
-    "mode": "local",
-    "detail": "The browser reads the text you paste and compares its lines."
+    "mode": "snapshot",
+    "detail": "CLAA published cruise schedules for selected ports, checked daily. These are planned calls, not live ship positions or crowd estimates.",
+    "cadence": "Daily",
+    "probes": [
+      {
+        "url": "https://coolcode.ca/portwindow/data/status.json",
+        "path": [
+          "checked_at"
+        ],
+        "precision": "minute",
+        "label": "Official port schedules checked",
+        "count_at": {
+          "path": [
+            "count"
+          ],
+          "unit": "schedule entries"
+        }
+      }
+    ]
   }
 }

@@ -1,34 +1,15 @@
 <!doctype html>
-<html lang="en-CA">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="{{DESCRIPTION}}">
-  <title>{{TITLE}} · CoolCode</title>
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./app.mjs"></script>
-  {{VISIT_COUNTER}}
-</head>
-<body data-tool-id="{{TOOL_ID}}">
-  <a class="skip" href="#main">Skip to content</a>
-  <header><a href="https://coolcode.ca/">← CoolCode.ca</a><a href="{{SOURCE_URL}}">Source &amp; instructions ↗</a></header>
-  <main id="main">
-    <p class="eyebrow">Browser tool starter</p>
-    <h1>{{TITLE}}</h1>
-    <p class="intro">{{DESCRIPTION}}</p>
-    <section aria-labelledby="example-title">
-      <h2 id="example-title">Clean a list</h2>
-      <p>Trim spaces, skip blank lines and remove exact duplicates. Capitalization stays distinct.</p>
-      <div class="panels">
-        <div><label for="input">Your lines</label><textarea id="input" rows="10" maxlength="100000" spellcheck="false" placeholder="Paste one item per line"></textarea></div>
-        <div><label for="output">Cleaned lines</label><textarea id="output" rows="10" readonly spellcheck="false"></textarea></div>
-      </div>
-      <div class="actions"><button id="sample" type="button">Load example</button><button id="clear" type="button">Clear</button><button id="copy" type="button" hidden>Copy result</button></div>
-      <p id="status" role="status" aria-live="polite">Paste a list to begin.</p>
-      <noscript><p>This tool needs JavaScript to process your text. The source is available above.</p></noscript>
-    </section>
-    <aside aria-label="Privacy"><strong>Stays on your device.</strong> The browser processes your text in this tab. Reloading clears it.</aside>
-  </main>
-  <footer>Part of <a href="https://coolcode.ca/">the CoolCode collection</a>. {{ISSUE_LINK}}</footer>
-</body>
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="{{DESCRIPTION}}"><title>Cruise port schedules and time windows · {{TITLE}}</title><link rel="stylesheet" href="./style.css">{{VISIT_COUNTER}}</head>
+<body data-tool="{{TOOL_ID}}"><a class="skip" href="#main">Skip to schedules</a><header class="top"><a href="https://coolcode.ca/">← CoolCode</a><span>{{TITLE}}</span><a href="{{SOURCE_URL}}">Source code ↗</a></header>
+<main id="main"><section class="hero"><div><p class="eyebrow">A little planning before you arrive</p><h1>Cruise port schedules<br>and time windows.</h1><p class="intro">Find your ship, compare days in port and make room for the return trip.</p></div><aside><strong>Published plans. Clear limits.</strong><p>Times are port-local. These schedules do not show live positions, passenger counts or official all-aboard times.</p><a href="https://claalaska.com/?page_id=1250" target="_blank" rel="noopener">Official CLAA schedules ↗</a></aside></section>
+<div class="source-strip"><span id="freshness" role="status">Loading published schedules…</span><label>Capture <select id="capture" disabled><option value="current">Latest successful check</option></select></label></div><p id="stale" class="warning" hidden></p>
+<section class="filters" aria-label="Schedule filters"><label>Port <select id="port" disabled></select></label><label>Ship name <input id="ship" type="search" placeholder="Any ship in the schedule"></label><label>From <input id="from" type="date"></label><label>Through <input id="to" type="date"></label><label class="check"><input id="favourites-only" type="checkbox"> Favourites only</label><button id="reset" type="button">Reset filters</button></section>
+<div class="tabs" aria-label="Views"><button id="tab-calls" aria-selected="true">Schedule</button><button id="tab-calendar" aria-selected="false">Daily calendar</button><button id="tab-changes" aria-selected="false">Observed changes</button></div>
+<section id="calls"><div class="section-heading"><div><h2>Find your port call</h2><p id="result-count" aria-live="polite"></p></div><button id="export" disabled>Export filtered calendar</button></div>
+<details class="planner"><summary>Your planning buffers</summary><p>Set your own time after arrival and before departure. The result is a planning estimate. Your operator decides when you may disembark and must return.</p><div class="buffer-fields"><label>After arrival (minutes)<input id="after" type="number" min="0" max="720" step="1" value="60"></label><label>Before departure (minutes)<input id="before" type="number" min="0" max="720" step="1" value="90"></label></div></details>
+<div class="saved-bar"><span>Favourites stay in this tab until saved.</span><button id="save">Save on this device</button><button id="load">Load saved</button><button id="forget">Delete saved copy</button></div>
+<p id="status" role="status"></p><div id="call-list" class="cards"></div><button id="more" hidden>Show more calls</button></section>
+<section id="calendar" hidden><h2>Compare port days</h2><p>Counts reflect the current filters. Peak overlap uses only entries with both known times; it is not a crowd estimate. Missing times are excluded.</p><div id="days" class="days"></div></section>
+<section id="changes" hidden><h2>What changed between checks?</h2><p id="history-note"></p><div id="change-list"></div></section>
+<section class="sources"><h2>Read the original schedules</h2><div id="source-links"></div><p>Calendar times and vessel labels are transcribed from CLAA's published PDFs. Some names are abbreviated in the original. Blank times remain unknown; separate overnight entries remain separate. Port Window is independent of CLAA and cruise operators.</p></section>
+</main><footer><span>Your searches, buffers and favourites are processed on this device. Only the public schedule capture is downloaded.</span><nav><a href="{{SOURCE_URL}}">Code &amp; data notes</a>{{ISSUE_LINK}}</nav></footer><script type="module" src="./app.mjs"></script></body></html>
