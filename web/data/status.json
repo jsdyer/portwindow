@@ -1,42 +1,42 @@
 {
-  "checked_at": "2026-11-25T06:47:13Z",
-  "attempted_at": "2026-11-25T06:47:59Z",
+  "checked_at": "2026-11-25T06:47:56Z",
+  "attempted_at": "2026-11-25T06:50:11Z",
   "state": "partial",
-  "failed_count": 1,
+  "failed_count": 3,
   "pending_count": 2,
   "count": 1484,
   "port_count": 5,
   "configured_port_count": 8,
-  "successful_count": 5,
+  "successful_count": 3,
   "seasons": [
     2026,
     2027
   ],
-  "sha256": "54684f627916e425f55a22b374fb855a7d9291c152d916c0d8d9be5846ef0264",
+  "sha256": "c6ffec29319f17d4ac48ba7a88c772cf01f266596e1db06903cb475f677df2d0",
   "ports": [
     {
       "code": "VAN",
       "season": 2027,
       "count": 369,
       "status": "ok",
-      "checked_at": "2026-11-25T06:47:13Z",
-      "attempted_at": "2026-11-25T06:47:13Z"
+      "checked_at": "2026-11-25T06:50:08Z",
+      "attempted_at": "2026-11-25T06:50:08Z"
     },
     {
       "code": "VIC",
       "season": 2027,
       "count": 320,
       "status": "ok",
-      "checked_at": "2026-11-25T06:47:17Z",
-      "attempted_at": "2026-11-25T06:47:17Z"
+      "checked_at": "2026-11-25T06:50:08Z",
+      "attempted_at": "2026-11-25T06:50:08Z"
     },
     {
       "code": "JNU",
       "season": 2027,
       "count": 699,
       "status": "ok",
-      "checked_at": "2026-11-25T06:47:20Z",
-      "attempted_at": "2026-11-25T06:47:20Z"
+      "checked_at": "2026-11-25T06:50:08Z",
+      "attempted_at": "2026-11-25T06:50:08Z"
     },
     {
       "code": "HAL",
@@ -44,7 +44,7 @@
       "count": 0,
       "status": "unavailable",
       "checked_at": null,
-      "attempted_at": "2026-11-25T06:47:26Z"
+      "attempted_at": "2026-11-25T06:50:08Z"
     },
     {
       "code": "CHT",
@@ -52,7 +52,7 @@
       "count": 0,
       "status": "pending",
       "checked_at": null,
-      "attempted_at": "2026-11-25T06:47:35Z"
+      "attempted_at": "2026-11-25T06:50:09Z"
     },
     {
       "code": "SJN",
@@ -60,23 +60,23 @@
       "count": 0,
       "status": "pending",
       "checked_at": null,
-      "attempted_at": "2026-11-25T06:47:41Z"
+      "attempted_at": "2026-11-25T06:50:10Z"
     },
     {
       "code": "SYD",
       "season": 2026,
       "count": 90,
-      "status": "ok",
+      "status": "retained",
       "checked_at": "2026-11-25T06:47:56Z",
-      "attempted_at": "2026-11-25T06:47:56Z"
+      "attempted_at": "2026-11-25T06:50:11Z"
     },
     {
       "code": "LOU",
       "season": 2026,
       "count": 6,
-      "status": "ok",
+      "status": "retained",
       "checked_at": "2026-11-25T06:47:59Z",
-      "attempted_at": "2026-11-25T06:47:59Z"
+      "attempted_at": "2026-11-25T06:50:11Z"
     }
   ]
 }
