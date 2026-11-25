@@ -1,7 +1,82 @@
 {
-  "checked_at": "2026-11-25T05:49:40Z",
-  "count": 1388,
-  "port_count": 3,
-  "season": 2027,
-  "sha256": "d25adbb34f1a75a9bf3c089e5dac28a21eb61fec2cc70d7fe338624616c70239"
+  "checked_at": "2026-11-25T06:47:13Z",
+  "attempted_at": "2026-11-25T06:47:59Z",
+  "state": "partial",
+  "failed_count": 1,
+  "pending_count": 2,
+  "count": 1484,
+  "port_count": 5,
+  "configured_port_count": 8,
+  "successful_count": 5,
+  "seasons": [
+    2026,
+    2027
+  ],
+  "sha256": "54684f627916e425f55a22b374fb855a7d9291c152d916c0d8d9be5846ef0264",
+  "ports": [
+    {
+      "code": "VAN",
+      "season": 2027,
+      "count": 369,
+      "status": "ok",
+      "checked_at": "2026-11-25T06:47:13Z",
+      "attempted_at": "2026-11-25T06:47:13Z"
+    },
+    {
+      "code": "VIC",
+      "season": 2027,
+      "count": 320,
+      "status": "ok",
+      "checked_at": "2026-11-25T06:47:17Z",
+      "attempted_at": "2026-11-25T06:47:17Z"
+    },
+    {
+      "code": "JNU",
+      "season": 2027,
+      "count": 699,
+      "status": "ok",
+      "checked_at": "2026-11-25T06:47:20Z",
+      "attempted_at": "2026-11-25T06:47:20Z"
+    },
+    {
+      "code": "HAL",
+      "season": null,
+      "count": 0,
+      "status": "unavailable",
+      "checked_at": null,
+      "attempted_at": "2026-11-25T06:47:26Z"
+    },
+    {
+      "code": "CHT",
+      "season": null,
+      "count": 0,
+      "status": "pending",
+      "checked_at": null,
+      "attempted_at": "2026-11-25T06:47:35Z"
+    },
+    {
+      "code": "SJN",
+      "season": null,
+      "count": 0,
+      "status": "pending",
+      "checked_at": null,
+      "attempted_at": "2026-11-25T06:47:41Z"
+    },
+    {
+      "code": "SYD",
+      "season": 2026,
+      "count": 90,
+      "status": "ok",
+      "checked_at": "2026-11-25T06:47:56Z",
+      "attempted_at": "2026-11-25T06:47:56Z"
+    },
+    {
+      "code": "LOU",
+      "season": 2026,
+      "count": 6,
+      "status": "ok",
+      "checked_at": "2026-11-25T06:47:59Z",
+      "attempted_at": "2026-11-25T06:47:59Z"
+    }
+  ]
 }

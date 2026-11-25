@@ -1,0 +1,838 @@
+Date
+Cruise Ship
+Times
+Cruise Line
+Pax
+Crew
+Berth 
+Agent
+Length 
+April 9, 2026
+Viking Polaris
+0800-1330
+Viking
+378
+256
+Main Dock
+Fk Warren
+205 m
+April 18, 2026
+Viking Octantis
+0700-1400
+Viking
+378
+256
+Main Dock
+Fk Warren
+205 m
+April 28, 2026
+Zuiderdam
+1000-1800
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+May 6, 2026
+Zuiderdam
+0700-1600
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+May 12, 2026
+Zuiderdam
+1000-2000
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+May 20, 2026
+Zuiderdam
+0700-1600
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+May 25, 2026
+Volendam
+1000-1800
+Holland America
+1432
+604
+Main Dock
+Fk Warren
+238 m
+May 26, 2026
+Zuiderdam
+1000-2000
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290m
+June 3, 2026
+Zuiderdam
+0700-1600
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290m
+June 9, 2026
+Zuiderdam
+1000-2000
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290m
+June 17, 2026
+Zuiderdam
+0700-1600
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290m
+June 23, 2026
+Zuiderdam
+1000-2000
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290m
+June 23, 2026
+Volendam
+0800-1700
+Holland America
+1432
+604
+Liberty Pier
+Fk Warren
+238 m
+June 24, 2026
+Celebrity Silhouette
+0900-1800
+Celebrity 
+2902
+1285
+Main Dock
+LOLA
+315 m
+July 1, 2026
+Zuiderdam
+0700-1600
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+July 2, 2026
+Seven Seas Mariner
+1000-1800
+Regent
+700
+445
+Main Dock
+Fk Warren
+216 m
+July 12, 2026
+Vista 
+0900-1800
+Oceania
+1200
+800
+Main Dock
+Fk Warren
+251 m
+July 15, 2026
+Zuiderdam
+0900-1900
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+July 21, 2026
+Zuiderdam
+0800-1700
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+July 21, 2026
+Volendam
+0930-1700
+Holland America
+1432
+604
+Liberty Pier
+Fk Warren
+238 m
+July 23, 2026
+Crown Princess
+0800-1630
+Princess 
+3080
+1200
+Main Dock
+Fk Warren
+290 m
+July 29, 2026
+Volendam
+0900-1700
+Holland America
+1432
+604
+Main Dock
+Fk Warren
+238 m
+August 4, 2026
+Volendam
+0930-1700
+Holland America
+1432
+604
+Main Dock
+Fk Warren
+238 m
+August 12, 2026
+Volendam
+0900-1700
+Holland America
+1432
+604
+Main Dock
+Fk Warren
+238 m
+August 19, 2026
+Volendam
+0900-1900
+Holland America
+1432
+604
+Main Dock
+Fk Warren
+238 m
+August 25, 2026
+Zuiderdam
+1000-2000
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+August 27, 2026
+Carnival Pride
+0800-1600
+Carnival
+2134
+930
+Main Dock
+LOLA
+294 m
+August 31, 2026
+Sapphire Princess
+0700-1600
+Princess 
+2680
+1100
+Main Dock
+Fk Warren
+290 m
+September 1, 2026
+Seven Seas Splendor
+0800-1700
+Regent
+746
+548
+Main Dock
+Fk Warren
+224 m
+September 3, 2026
+Celebrity Silhouette
+0900-1800
+Celebrity 
+2902
+1285
+Main Dock
+LOLA
+315 m
+September 4, 2026
+Mein Schiff 1
+0730-1730
+TUI
+2894
+1000
+Main Dock
+Fk Warren
+318 m
+September 6, 2026
+Seabourn Ovation*
+0800-1800
+Seabourn
+604
+450
+Main Dock
+Fk Warren
+210 m
+September 7, 2026
+Norwegian Escape*
+1200-1800
+Norwegian
+4218
+1733
+Main Dock
+Fk Warren
+326 m
+September 8, 2026
+Sapphire Princess
+0900-1800
+Princess 
+2680
+1100
+Main Dock
+Fk Warren
+290 m
+Port of Sydney Cruise Schedule 2026
+Tentative 
+As of April 29th 2026
+
+
+September 8, 2026
+Zuiderdam
+1000-2000
+Holland America
+1964
+817
+Liberty Pier
+Fk Warren
+290 m
+September 9, 2026
+Vista 
+1000-2000
+Oceania
+1200
+800
+Liberty Pier
+Fk Warren
+251 m
+September 9, 2026
+Celebrity Silhouette
+1100-1900
+Celebrity 
+2902
+1285
+Main Dock
+LOLA
+315 m
+September 10, 2026
+Carnival Sunshine
+1000-1800
+Carnival 
+3002
+1040
+Liberty Pier
+LOLA
+272m
+September 10, 2026
+Seven Seas Splendor
+1200-2000
+Regent
+746
+548
+Anchor
+Fk Warren
+224 m
+September 10, 2026
+Independence of the Seas*
+0700-1400
+Royal Caribbean
+3858
+1440
+Main Dock
+LOLA
+339 m
+September 11, 2026
+Norwegian Jewel
+1100-1900
+Norwegian
+2376
+1069
+Main Dock
+Fk Warren
+294 m
+September 16, 2026
+Zuiderdam
+0700-1600
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+September 17, 2026
+ Vista 
+1000-1900
+Oceania
+1469
+800
+Liberty Pier
+Fk Warren
+251 m
+September 18, 2026
+Sapphire Princess
+0800-1700
+Princess
+2680
+1100
+Main Dock
+Fk Warren
+290 m
+September 19, 2026
+Star Pride
+1300-1900
+Windstar
+312
+151
+Main Dock
+Fk Warren
+134 m
+September 20, 2026
+Norwegian Jewel
+0800-1600
+Norwegian
+2376
+1069
+Main Dock
+Fk Warren
+294 m
+September 20, 2026
+Celebrity Silhouette
+1000-1900
+Celebrity 
+2902
+1285
+Liberty Pier
+LOLA
+315 m
+September 22, 2026
+Zuiderdam
+1000-2000
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+September 22, 2026
+Volendam
+0930-1700
+Holland America
+1432
+604
+Liberty Pier
+Fk Warren
+238 m
+September 23, 2026
+Norwegian Escape
+0700-1700
+Norwegian
+4218
+1733
+Main Dock
+Fk Warren
+326 m
+September 24, 2026
+Carnival Sunshine
+1000-1800
+Carnival 
+3002
+1040
+Main Dock
+LOLA
+272 m
+September 24, 2026
+Seven Seas Splendor
+0700-1600
+Regent
+746
+548
+Liberty Pier
+Fk Warren
+224 m
+September 26, 2026
+Arcadia
+0900-1700
+P&O
+2388
+880
+Main Dock
+Fk Warren
+290 m
+September 28, 2026
+Sapphire Princess
+0900-1800
+Princess
+3670
+1100
+Main Dock
+Fk Warren
+290 m
+September 28, 2026
+Crystal Symphony 
+0900-1800
+Crystal
+606
+530
+Liberty Pier
+Fk Warren
+238 m
+September 29, 2026
+Norwegian Escape
+0700-1500
+Norwegian
+4218
+1733
+Main Dock
+Fk Warren
+326 m
+September 30, 2026
+Journey
+1300-2000
+Azamara 
+700
+408
+Main Dock
+Fk Warren
+181 m
+October 1, 2026
+Celebrity Silhouette
+1030-1900
+Celebrity 
+2902
+1285
+Liberty
+LOLA
+315 m
+October 1, 2026
+Queen Mary 2 
+0800-1800
+Cunard
+2685
+1292
+Main Dock
+Fk Warren
+345 m
+October 1, 2026
+ Vista 
+1100-1800
+Oceania
+1200
+800
+Anchor
+Fk Warren
+251 m
+October 2, 2026
+Norwegian Jewel
+1100-1900
+Norwegian
+2376
+1069
+Dock 
+Fk Warren
+294 m
+October 2, 2026
+Seven Seas Splendor
+1200-2000
+Regent
+746
+548
+Liberty Pier
+Fk Warren
+224 m
+October 2, 2026
+Le Bellot
+0730-1330
+Ponant
+184
+110
+Anchor
+Fk Warren
+131 m
+October 3, 2026
+Volendam
+0800-1600
+Holland America
+1432
+604
+Main Dock
+Fk Warren
+238 m
+October 3, 2026
+Explora III
+0800-1700
+MSC
+922
+700
+Liberty
+Fk Warren
+248 m
+October 6, 2026
+Crystal Symphony 
+0900-1700
+Crystal
+606
+530
+Main Dock
+Fk Warren
+238 m
+October 7, 2026
+Zuiderdam
+0900-1900
+Holland America
+1964
+817
+Main Dock
+Fk Warren
+290 m
+October 8, 2026
+Carnival Sunshine
+1000-1800
+Carnival 
+3002
+1040
+Liberty Pier
+LOLA
+272 m
+October 8, 2026
+Sapphire Princess
+0800-1700
+Princess
+2670
+1100
+Main Dock
+Fk Warren
+290 m
+October 9, 2026
+Mein Schiff 1
+0830-1830
+TUI
+2500
+1000
+Main Dock
+Fk Warren
+318 m
+October 11, 2026
+Norwegian Jewel
+0800-1600
+Norwegian
+2376
+1069
+Main Dock
+Fk Warren
+294 m
+October 12, 2026
+Celebrity Silhouette
+1030-1900
+Celebrity 
+2902
+1285
+Main Dock
+LOLA
+315 m
+October 12, 2026
+Vista 
+1030-1800
+Oceania
+1200
+800
+Liberty Pier
+Fk Warren
+251 m
+October 12, 2026
+Crystal Symphony 
+0900-1800
+Crystal
+606
+530
+Anchor
+Fk Warren
+238 m
+
+
+October 13, 2026
+Zuiderdam
+1000-2000
+Holland America
+2272
+817
+Main Dock
+Fk Warren
+290 m
+October 13, 2026
+Journey
+1000-1900
+Azamara 
+690
+390
+Liberty Pier
+Fk Warren
+181 m
+October 15, 2026
+Seven Seas Splendor
+0700-1530
+Regent
+746
+548
+Main Dock
+Fk Warren
+224 m
+October 15, 2026
+Star Pride
+0700-1400
+Windstar
+312
+190
+Liberty Pier
+Fk Warren
+134 m
+October 18, 2026
+Sapphire Princess
+0900-1800
+Princess
+2670
+1100
+Main Dock
+Fk Warren
+290 m
+October 19, 2026
+Explora III
+0800-1700
+MSC
+922
+700
+Main Dock
+Fk Warren
+248 m
+October 20, 2026
+Crystal Symphony 
+0700-1600
+Crystal
+606
+530
+Main Dock
+Fk Warren
+238 m
+October 21, 2026
+Viking Polaris 
+1200-1800
+Viking
+378
+256
+Liberty Pier
+Fk Warren
+205 m
+October 21, 2026
+Norwegian Sun
+1100-1800
+Norwegian
+1936
+906
+Main Dock
+Fk Warren
+258 m
+October 22, 2026
+Carnival Sunshine
+0900-1800
+Carnival 
+3002
+1040
+Main Dock
+LOLA
+272 m
+October 22, 2026
+Zuiderdam
+0800-1600
+Holland America
+1964
+817
+Liberty Pier
+Fk Warren
+290 m
+October 24, 2026
+Vista 
+1130-1830
+Oceania
+1200
+800
+Main Dock
+Fk Warren
+251 m
+October 24, 2026
+Seven Seas Splendor
+1200-2000
+Regent
+746
+548
+Liberty Pier
+Fk Warren
+224 m
+October 24, 2026
+Azamara Journey
+1230-1830
+Azamara 
+700
+408
+Anchor
+Fk Warren
+181 m
+October 27, 2026
+Sapphire Princess
+0700-1700
+Princess
+2670
+1100
+Main Dock
+Fk Warren
+290 m
+November 3, 2026
+Seven Seas Splendor
+1030-1830
+Regent
+746
+548
+Main Dock
+Fk Warren
+224 m
+Total Passengers:
+165580
+74128
+* Inaugural Visit
+Double Ship Day
+Triple Ship Day
+For more information 
+Contact: Nicole MacAulay
+Manager of Cruise
+Port of Sydney Development Corporation
+nicole@portofsydney.ca or 902-564-0800
+The cruise schedule is subject to change, with updates communicated via text and shared on social media channels.

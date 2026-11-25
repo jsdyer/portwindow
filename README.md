@@ -1,15 +1,17 @@
 # Port Window
 
-[Open Port Window](https://coolcode.ca/portwindow/) · Published cruise schedules with personal planning buffers.
+[Open Port Window](https://coolcode.ca/portwindow/) · Published cruise schedules with clear source years and personal planning buffers.
 
 <!-- coolcode:guide -->
-Choose Vancouver, Victoria or Juneau, search any vessel in the source schedule and filter a date range. The daily calendar counts scheduled entries and shows peak overlap among entries with both times. It does not estimate crowds, passengers or live ship positions.
+Choose a port and its published schedule year, search any vessel in that source, and filter dates. Pacific coverage includes Vancouver, Victoria and Juneau. Maritime coverage includes Halifax, Charlottetown, Saint John, Sydney and Louisbourg, with an explicit availability notice when an official schedule cannot yet be downloaded.
 
-Set your own minutes after arrival and before departure to see a personal planning window. Your cruise operator decides disembarkation and all-aboard times; verify these directly. Missing times remain unknown. A 24:00 departure is midnight at the end of that date. Separate overnight entries are not silently joined.
+Each port keeps its own year and last successful check. Sydney and Louisbourg currently publish 2026 schedules, while the Pacific sources publish 2027. Past sailing dates are labelled as a prior season. A fresh download of an old schedule does not turn it into an upcoming schedule. Halifax's public source is currently inaccessible to the collector; Charlottetown says its schedule is coming soon, and Saint John says the 2027 release is expected in January. Their official links stay prominent.
 
-Mark favourites, explicitly save them on this device and export the filtered complete intervals as a calendar file. The export includes published times and source links; it does not turn your personal buffers into official deadlines. A capture selector preserves earlier source coverage when a schedule changes, and the changes view records observed additions, removals and time changes.
+Use the daily calendar to compare scheduled entries and peak overlap among intervals with both times. It does not estimate crowds or passenger numbers. Set your own minutes after arrival and before departure to estimate a planning window; your operator decides disembarkation and all-aboard times. Blank times remain unknown, 24:00 means the end of that date, and separate overnight rows remain separate.
 
-Schedules are checked daily against Cruise Line Agencies of Alaska's public PDFs. The checked date, PDF edition and sailing dates have different meanings. Open the original PDF linked from each entry and reconfirm with your operator before travel.
+Favourites stay in this tab until you explicitly save them on this device. Export complete filtered intervals as an ICS calendar file, including source years, source links and each port's real check time. Historical captures retain their original coverage. The changes view records observed additions, removals and time changes.
+
+Sources are checked independently every day. If one fails, its earlier verified rows and their original check time remain visible while other ports can update. An unavailable port without a prior capture shows no fabricated calls. Always confirm plans with the official port source and your cruise operator.
 <!-- /coolcode:guide -->
 
 ## Build and check
@@ -23,30 +25,59 @@ No paid service or API key is required. Python 3.12+, PyMuPDF 1.26.6 for collect
     python3 scripts/build.py
     python3 -m http.server 8000 --directory dist
 
-The static builder is offline. Browser checks use tests/browser-requirements.txt and CHROMIUM_PATH; CI uses the installed google-chrome on Ubuntu 24.04. Do not commit dist.
+The builder is offline. It gives HTML-referenced CSS, JavaScript imports and the public capture one deterministic content version, preventing a returning browser from mixing old modules with a newly published interface. Browser checks use tests/browser-requirements.txt and CHROMIUM_PATH; CI uses installed google-chrome on Ubuntu 24.04. Do not commit dist.
 
-## Sources and collection
+## Actual source coverage
 
-The [CLAA 2027 schedule index](https://claalaska.com/?page_id=1250) links the original calendars. The initial release covers 369 Vancouver, 320 Victoria and 699 Juneau entries in the October 2, 2026 editions; these are data observations, not assumed future totals. Cruise Line Agencies of Alaska owns the original publications. This application presents normalized factual dates/times with attribution and page links and does not mirror PDF files or imply endorsement. No blanket open-data licence is claimed.
+These are observations from the November 25, 2026 integration check, not fixed future counts:
 
-The collector checks robots.txt, discovers each reviewed port's PDF from the index, verifies port/year/weekday alignment, reads positioned calendar blocks and matches time positions around the separator. It rejects ambiguous blocks, unexpected count drops, malformed files and access errors. Blank times remain null. Ship labels retain source abbreviations. ISO UTC calendar fields are derived from each port's IANA timezone, including date rollover at 24:00.
+| Port | Official source | Published coverage |
+| --- | --- | --- |
+| Vancouver | [CLAA schedule index](https://claalaska.com/?page_id=1250) | 369 entries, 2027; October 2, 2026 edition |
+| Victoria | [CLAA schedule index](https://claalaska.com/?page_id=1250) | 320 entries, 2027; October 2, 2026 edition |
+| Juneau | [CLAA schedule index](https://claalaska.com/?page_id=1250) | 699 entries, 2027; October 2, 2026 edition |
+| Halifax | [Port Halifax](https://www.porthalifax.ca/cruise/cruise-schedule/) | No complete verified capture; normal collection returns HTTP 403 |
+| Charlottetown | [Port Charlottetown](https://portcharlottetown.com/upcoming-cruise/) | Official page says the schedule is coming soon |
+| Saint John | [Port Saint John](https://www.sjport.com/cruise-schedule) | 2026 season ended; official page expects its 2027 schedule in January |
+| Sydney | [Port of Sydney](https://www.sydneyport.ca/cruiseschedule) | 90 entries, April 9–November 3, 2026; tentative April 29 edition |
+| Louisbourg | [Port of Sydney / Louisbourg](https://www.sydneyport.ca/cruiseschedule) | Six entries, September 9–October 15, 2026; no edition date printed |
 
-A failed collection preserves the previous good files. The full capture is web/data/index.json; the small web/data/status.json probe contains the successful checked_at, entry count, port count, season and capture hash. Checked timestamps advance only after all configured sources validate. Source editions do not advance merely because a collector ran.
+The Halifax browser attempt also failed; indexed search excerpts were incomplete and were not used to fabricate a full snapshot. Charlottetown's vendor retail hours are not vessel arrival/departure times and are not ingested. No current reliable official call schedule was found for Digby or Summerside; Pictou's reviewed page still described 2025, so those ports are not represented as current coverage.
 
-Changed source captures retain up to six older captures, including their original season and port coverage. Observed changes are limited to the latest 100 entries and begin at the first capture. Changed ship names or dates appear as removal/addition. Page-layout changes alone are not reported as changed sailing times.
+Each source organization owns its original publication. Port Window normalizes factual dates/times with attribution and links, does not mirror PDFs, and does not claim endorsement or a blanket open-data licence. Source access uses ordinary public requests and respects robots.txt. It does not bypass authentication or challenges.
+
+## Collection and failure handling
+
+config/ports.json declares each port's adapter, source, IANA timezone and record floor. The CLAA adapter discovers the current linked PDF, verifies port/year/weekday alignment and reads positioned calendar blocks. The Sydney/Louisbourg adapter follows the current labelled download links, reads explicit full-year rows and verifies the named PDF title. The public HTML adapter accepts dated vessel tables with arrival/departure headers; ambiguous schedule years are rejected. Missing values stay null. Ship labels preserve source abbreviations and footnotes.
+
+Sources fail independently. A malformed PDF, access denial, robots restriction, unknown layout or unexpected count drop retains that port's earlier verified rows. Its status becomes retained, its last successful checked_at stays unchanged, and its attempted_at advances. A newly configured failed source is unavailable with zero rows and no successful check. A verified release notice is pending: its availability-check time is recorded separately from a nonexistent schedule check. No valid source and no prior rows means the refresh fails without writing public files.
+
+web/data/index.json uses schema 2 with per-port season, status, checked_at, attempted_at, availability_checked_at, source edition and coverage count. Historical schema-1 Pacific captures remain readable. web/data/status.json is a small hashed probe with:
+
+- checked_at: the **oldest successful check among ports with available schedules**, including retained data.
+- attempted_at: the latest collector attempt; this is not a data-freshness timestamp.
+- state: ok only when every configured source has a successfully checked schedule; otherwise partial.
+- successful_count, failed_count and pending_count, plus per-port status and real check times.
+- count, port_count, configured_port_count and the actual published seasons.
+
+Thus a blocked source cannot silently receive a fresh check date. If all sources fail but old rows exist, the public availability report can update while the schedule check remains old. The homepage/watchdog uses checked_at, never attempted_at. The app warns when an available schedule is older than 72 hours.
+
+Up to six earlier changed captures and 100 observed differences are retained. Captures retain original seasons and port coverage. Source editions are not replaced by run dates. Ship-name/date changes appear as removal/addition; pagination changes alone are not time changes.
 
 ## Expand or customize
 
-Edit config/ports.json to add a port from the official index with its exact code, display name, IANA timezone and a defensible minimum_calls floor. Every configured port must use the reviewed calendar layout and pass parser tests. Search, filters and counts derive from the resulting data; adding a port does not require a new UI list. To move to a new season, review its index URL and update the collector's reviewed URL check, season and test fixtures; do not guess unpublished schedules.
+Edit config/ports.json to add a reviewed official port with a unique code, display name, region, IANA timezone, adapter and defensible minimum_calls floor. The CLAA source has an explicit configured year; Maritime PDF/HTML adapters derive the year from the actual publication. A new HTML layout or ambiguous season must be reviewed before its data is accepted. The frontend derives ports, years, searches and counts from the source data, not a starter list.
 
-Run collection, tests and build, then commit configuration, code and validated captures to main. Successful main builds deploy through GitHub Actions. No repository secret is needed. Personal search text, planning buffers and favourites remain in the visitor's browser; storage happens only when Save is clicked.
+Run collection, tests and build; review the per-port outcomes and commit source/configuration/captures to main. Successful main builds deploy through GitHub Actions. Historical captures preserve earlier coverage when changing sources or seasons. A pending release will be accepted automatically only if its resulting publication matches the validated adapter; otherwise it remains visibly unavailable for review.
+
+Personal search text, buffers and favourites stay in the visitor's browser. Storage happens only when Save is clicked. Sources and standard CoolCode aggregate visit reporting make ordinary public requests.
 
 ## Schedules and integration
 
-.github/workflows/pages.yml collects daily at 10:43 UTC, validates, tests the real interface, commits source captures and deploys Pages. Its named source step is “Refresh official CLAA port schedules”. The independent CoolCode server scheduler should dispatch pages.yml daily. A separate allowlisted schedule-guard.yml renews managed schedules; a guard is not evidence of fresh data. The UI warns when a capture is older than 72 hours.
+.github/workflows/pages.yml runs daily at 10:43 UTC. Its source step is “Refresh official port schedules”. It reports individual source failures as visible workflow warnings, tests, commits the validated capture/status and deploys Pages. The independent CoolCode scheduler should dispatch pages.yml daily. The separate allowlisted schedule guard renews managed schedules; a successful guard is not evidence of fresh source data.
 
-tool.json supplies the hub card, source note and /portwindow/data/status.json freshness probe. Hub registry, guide import, README, audit, sitemap, watchdog collector target and Cloudflare routing are maintained centrally. The existing /portwindow/ Worker route needs no secret or server-side API.
+tool.json supplies the card, source note and /portwindow/data/status.json probe. The probe paths checked_at and count are unchanged, but the label is now “Oldest available schedule checked”. Central integration must update the guide and named collection step. The existing /portwindow/ Cloudflare route needs no secret or additional API.
 
-## Coverage limits
+## Limits
 
-This is a planned-call calendar for three selected ports, not a booking engine, live arrival board, itinerary guarantee, fare finder or occupancy service. Unknown intervals are excluded from timed overlap and ICS exports. Entry counts can include separate overnight rows. Calendar files can become outdated and are not subscribed calendars; re-export after checking for updates. Official source failures can delay publication without deleting the last good capture.
+This is a published-call planning tool, not a live arrival board, booking engine, fare finder or occupancy service. Past seasons are historical information. Unknown or non-same-day intervals are excluded from timed overlap and calendar export. Calendar files are dated exports, not subscriptions; re-export after checking for changes.

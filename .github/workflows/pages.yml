@@ -29,11 +29,21 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
-      - name: Refresh official CLAA port schedules
+      - name: Refresh official port schedules
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           python3 -m pip install -r scripts/requirements.txt
           python3 scripts/refresh.py
+      - name: Report individual source availability
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          python3 - <<'PY'
+          import json
+          status = json.load(open('web/data/status.json'))
+          if status['failed_count']:
+              print('::warning::Some port sources failed. Their original check times and prior verified rows were retained; see the public per-port status.')
+          print(f"Available schedules: {status['port_count']}; pending releases: {status['pending_count']}; failed sources: {status['failed_count']}")
+          PY
       - name: Install schedule parser for tests
         run: python3 -m pip install -r scripts/requirements.txt
       - name: Test the application

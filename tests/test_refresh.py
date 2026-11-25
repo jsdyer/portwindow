@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
-from refresh import ROOT, parse_pdf, refresh, source_url, differences
+from refresh import ROOT, parse_pdf, refresh, source_url, differences, schedule_signature
 
 class Page:
     def __init__(self,fixture=None):self.fixture=fixture
@@ -62,14 +62,19 @@ class RefreshTests(unittest.TestCase):
         data=self.run_capture();c=data['calls'][0]
         self.assertEqual(c['arrival_at'],'2027-07-02T03:00:00Z')
         self.assertEqual(c['departure_at'],'2027-07-02T07:00:00Z')
-    def test_failed_download_preserves_good_capture_and_probe(self):
-        self.run_capture();before={p.name:p.read_bytes() for p in (self.root/'web/data').iterdir()}
-        with self.assertRaises(OSError):refresh(self.root,lambda _: (_ for _ in ()).throw(OSError('HTTP 403')))
-        self.assertEqual(before,{p.name:p.read_bytes() for p in (self.root/'web/data').iterdir()})
+    def test_failed_download_preserves_rows_and_their_original_check(self):
+        first=self.run_capture()
+        status=refresh(self.root,lambda _: (_ for _ in ()).throw(OSError('HTTP 403')),now='2026-11-26T12:00:00Z')
+        retained=json.loads((self.root/'web/data/index.json').read_text())
+        self.assertEqual(retained['calls'],first['calls'])
+        self.assertEqual(retained['checked_at'],first['checked_at'])
+        self.assertEqual(retained['ports'][0]['status'],'retained')
+        self.assertEqual(status['attempted_at'],'2026-11-26T12:00:00Z')
+        self.assertEqual(status['failed_count'],1)
     def test_unchanged_check_does_not_create_false_history(self):
         first=self.run_capture();second=self.run_capture('2026-11-26T12:00:00Z')
         self.assertEqual(second['history'],[]);self.assertEqual(second['changes'],[])
-        self.assertEqual(first['ports'],second['ports']);self.assertNotEqual(first['checked_at'],second['checked_at'])
+        self.assertEqual(schedule_signature(first['ports']),schedule_signature(second['ports']));self.assertNotEqual(first['checked_at'],second['checked_at'])
     def test_changed_times_retain_prior_capture(self):
         first=self.run_capture();self.rows[0]['departure']='23:00';second=self.run_capture('2026-11-26T12:00:00Z')
         self.assertEqual(len(second['history']),1)
@@ -77,5 +82,7 @@ class RefreshTests(unittest.TestCase):
         self.assertEqual(previous['calls'],first['calls'])
         self.assertEqual(second['changes'][0]['before']['departure'],'24:00')
     def test_robots_disallow_stops_before_pdf_collection(self):
-        with self.assertRaisesRegex(ValueError,'permit'):
-            refresh(self.root,lambda _: b'User-Agent: *\nDisallow: /\n')
+        with patch('refresh.parse_pdf') as parse:
+            with self.assertRaisesRegex(ValueError,'No valid schedule'):
+                refresh(self.root,lambda _: b'User-Agent: *\nDisallow: /\n')
+            parse.assert_not_called()

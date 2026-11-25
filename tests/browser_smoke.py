@@ -54,6 +54,39 @@ def main():
                 page.locator('#ship').fill('<img src=x onerror=alert(1)>')
                 expect(page.locator('#call-list .call-card')).to_have_count(0);assert page.locator('img').count()==0
                 page.locator('#reset').click()
+                # Atlantic schedules keep the year printed by their own source.
+                syd=next(p for p in data['ports'] if p['code']=='SYD')
+                page.locator('#port').select_option('SYD');page.locator('#reset').click()
+                expect(page.locator('#season')).to_have_value(str(syd['season']))
+                expect(page.locator('#coverage-title')).to_contain_text(str(syd['season']))
+                assert page.locator('#call-list .call-card').count()==min(60,syd['count'])
+                other=next((str(y) for y in data['seasons'] if y!=syd['season']),None)
+                if other:
+                    page.locator('#season').select_option(other)
+                    expect(page.locator('#call-list .call-card')).to_have_count(0)
+                page.locator('#reset').click()
+                with page.expect_download() as event:page.locator('#export').click()
+                atlantic=Path(event.value.path()).read_text().replace('\n ','')
+                assert 'Schedule year '+str(syd['season']) in atlantic
+                sample_atlantic=next(c for c in data['calls'] if c['port']=='SYD' and c['arrival_at'] and c['departure_at'])
+                assert 'DTSTART:'+sample_atlantic['arrival_at'].replace('-','').replace(':','') in atlantic
+                # Missing releases are visible source states, not zero-ship forecasts.
+                for code in ['HAL','CHT','SJN']:
+                    source=next(p for p in data['ports'] if p['code']==code)
+                    page.locator('#port').select_option(code);page.locator('#reset').click()
+                    expect(page.locator('#coverage-source')).to_have_attribute('href',source['url'])
+                    if not source['count']:
+                        expect(page.locator('#call-list .call-card')).to_have_count(0)
+                        expect(page.locator('#coverage-message')).to_contain_text('No published call table' if source['status']=='pending' else 'No verified schedule rows')
+                        expect(page.locator('#export')).to_be_disabled()
+                # Earlier captures retain their original list of ports and years.
+                if data['history']:
+                    earlier=data['history'][0]
+                    page.locator('#capture').select_option(earlier['path'])
+                    expect(page.locator('#freshness')).to_contain_text(str(earlier['count']))
+                    page.locator('#capture').select_option('current')
+                    expect(page.locator('#port option')).to_have_count(len(data['ports']))
+                page.locator('#port').select_option('SYD');page.locator('#reset').click()
                 page.screenshot(path=str(screenshots/'desktop.png'),full_page=True)
                 page.set_viewport_size({'width':390,'height':844})
                 assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')

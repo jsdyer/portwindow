@@ -1,10 +1,82 @@
 {
-  "season": 2027,
-  "schedule_index": "https://claalaska.com/?page_id=1250",
   "history_limit": 6,
   "ports": [
-    {"code":"VAN","name":"Vancouver","timezone":"America/Vancouver","minimum_calls":200},
-    {"code":"VIC","name":"Victoria","timezone":"America/Vancouver","minimum_calls":200},
-    {"code":"JNU","name":"Juneau","timezone":"America/Juneau","minimum_calls":400}
+    {
+      "code": "VAN",
+      "name": "Vancouver",
+      "timezone": "America/Vancouver",
+      "minimum_calls": 200,
+      "adapter": "claa",
+      "season": 2027,
+      "index": "https://claalaska.com/?page_id=1250",
+      "region": "Pacific"
+    },
+    {
+      "code": "VIC",
+      "name": "Victoria",
+      "timezone": "America/Vancouver",
+      "minimum_calls": 200,
+      "adapter": "claa",
+      "season": 2027,
+      "index": "https://claalaska.com/?page_id=1250",
+      "region": "Pacific"
+    },
+    {
+      "code": "JNU",
+      "name": "Juneau",
+      "timezone": "America/Juneau",
+      "minimum_calls": 400,
+      "adapter": "claa",
+      "season": 2027,
+      "index": "https://claalaska.com/?page_id=1250",
+      "region": "Pacific"
+    },
+    {
+      "code": "HAL",
+      "name": "Halifax",
+      "timezone": "America/Halifax",
+      "region": "Maritimes",
+      "adapter": "html",
+      "url": "https://www.porthalifax.ca/cruise/cruise-schedule/",
+      "minimum_calls": 80
+    },
+    {
+      "code": "CHT",
+      "name": "Charlottetown",
+      "timezone": "America/Halifax",
+      "region": "Maritimes",
+      "adapter": "html",
+      "url": "https://portcharlottetown.com/upcoming-cruise/",
+      "minimum_calls": 20
+    },
+    {
+      "code": "SJN",
+      "name": "Saint John",
+      "timezone": "America/Moncton",
+      "region": "Maritimes",
+      "adapter": "html",
+      "url": "https://www.sjport.com/cruise-schedule",
+      "minimum_calls": 20
+    },
+    {
+      "code": "SYD",
+      "name": "Sydney",
+      "timezone": "America/Halifax",
+      "region": "Maritimes",
+      "adapter": "maritime_pdf",
+      "url": "https://www.sydneyport.ca/_files/ugd/941752_c32bc8179ab24a9ea2d70c107806f711.pdf",
+      "index": "https://www.sydneyport.ca/cruiseschedule",
+      "minimum_calls": 50
+    },
+    {
+      "code": "LOU",
+      "name": "Louisbourg",
+      "timezone": "America/Halifax",
+      "region": "Maritimes",
+      "adapter": "maritime_pdf",
+      "url": "https://www.sydneyport.ca/_files/ugd/941752_a4f8478aed4a4d929ed1aa2db80e83ab.pdf",
+      "index": "https://www.sydneyport.ca/cruiseschedule",
+      "minimum_calls": 3
+    }
   ]
 }

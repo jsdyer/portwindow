@@ -1,13 +1,17 @@
 {
   "id": "portwindow",
   "title": "Port Window",
-  "description": "Explore official cruise schedules, compare port days and plan your own time buffer.",
+  "description": "Compare published cruise schedules across Pacific and Maritime ports, with clear source years and personal time buffers.",
   "category": "places",
   "tags": [
     "travel",
     "cruises",
+    "Maritimes",
+    "Halifax",
+    "Charlottetown",
+    "Sydney",
+    "Saint John",
     "Vancouver",
-    "Victoria",
     "Alaska",
     "schedule"
   ],
@@ -18,7 +22,7 @@
   "access": "browser",
   "data_info": {
     "mode": "snapshot",
-    "detail": "CLAA published cruise schedules for selected ports, checked daily. These are planned calls, not live ship positions or crowd estimates.",
+    "detail": "Official port schedules checked independently each day. Published years, missing releases and retained captures are shown per port; no live positions or crowd estimates.",
     "cadence": "Daily",
     "probes": [
       {
@@ -27,7 +31,7 @@
           "checked_at"
         ],
         "precision": "minute",
-        "label": "Official port schedules checked",
+        "label": "Oldest available schedule checked",
         "count_at": {
           "path": [
             "count"

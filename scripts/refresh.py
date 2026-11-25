@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Normalize dated facts from public CLAA calendars without guessing missing times."""
+"""Refresh each official port independently; preserve source years and prior good data."""
 from datetime import date, datetime, timezone, timedelta
 import hashlib
 from html.parser import HTMLParser
@@ -9,6 +9,9 @@ import re
 import tempfile
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
+from copy import deepcopy
+from maritime import PendingSchedule, discover_pdf, parse_marine_pdf, parse_port_html
 from urllib.robotparser import RobotFileParser
 from zoneinfo import ZoneInfo
 
@@ -92,21 +95,6 @@ def parse_pdf(raw,port,season):
             call['id']=hashlib.sha256((key+'|'+str(unique[key])).encode()).hexdigest()[:20]
         return edition,calls
 
-def validate_public(data):
-    if data.get('schema')!=1 or not isinstance(data.get('calls'),list) or not data['calls']:raise ValueError('Invalid schedule capture')
-    datetime.fromisoformat(data['checked_at'].replace('Z','+00:00'))
-    ports={p['code']:p for p in data['ports']}
-    if len({c['id'] for c in data['calls']})!=len(data['calls']):raise ValueError('Duplicate call ID')
-    for p in ports.values():
-        ZoneInfo(p['timezone'])
-        if not p['url'].startswith('https://claalaska.com/wp-content/uploads/') or not p['url'].endswith('.pdf'):raise ValueError('Untrusted source link')
-    for c in data['calls']:
-        d=date.fromisoformat(c['date'])
-        if d.year!=data['season'] or c['port'] not in ports or not c['ship']:raise ValueError('Invalid call')
-        for key in ('arrival','departure'):
-            if c[key] is not None and not CLOCK.fullmatch(c[key]):raise ValueError('Invalid call time')
-    return data
-
 def differences(old,new,checked):
     before={c['id']:c for c in old};after={c['id']:c for c in new};out=[]
     for key in sorted(before.keys()|after.keys()):
@@ -115,46 +103,145 @@ def differences(old,new,checked):
         if a is None or b is None or any(a[k]!=b[k] for k in fields):out.append({'detected_at':checked,'kind':'added' if not a else 'removed' if not b else 'updated','before':a,'after':b})
     return out
 
+ALLOWED_HOSTS={'claalaska.com','www.porthalifax.ca','www.portofhalifax.ca','portcharlottetown.com','www.sjport.com','www.sydneyport.ca'}
+
+def trusted(url):
+    parsed=urlsplit(url)
+    if parsed.scheme!='https' or parsed.hostname not in ALLOWED_HOSTS or parsed.username or parsed.password or parsed.port or '\\' in url:
+        raise ValueError('Unreviewed official source URL')
+    return url
+
+def upgrade(data):
+    result=deepcopy(data)
+    if result.get('schema')==1:
+        result['schema']=2;result['seasons']=[result['season']];result['attempted_at']=result['checked_at']
+        for p in result['ports']:
+            p.update(season=result['season'],status='ok',checked_at=result['checked_at'],attempted_at=result['checked_at'],availability_checked_at=result['checked_at'],message='',region='Pacific')
+        result.pop('season',None)
+    return result
+
+def timestamp(value):
+    if value is None:return None
+    parsed=datetime.fromisoformat(value.replace('Z','+00:00'))
+    if parsed.tzinfo is None:raise ValueError('Source check needs a timezone')
+    return value
+
+def validate_public(value):
+    data=upgrade(value)
+    if data.get('schema')!=2 or not isinstance(data.get('calls'),list) or not data['calls']:raise ValueError('Invalid schedule capture')
+    timestamp(data['checked_at']);timestamp(data['attempted_at'])
+    ports={p['code']:p for p in data['ports']}
+    if len(ports)!=len(data['ports']) or len({c['id'] for c in data['calls']})!=len(data['calls']):raise ValueError('Duplicate port or call identity')
+    for p in ports.values():
+        ZoneInfo(p['timezone']);trusted(p['url'])
+        if p['status'] not in ('ok','pending','unavailable','retained'):raise ValueError('Unknown source status')
+        timestamp(p['checked_at']);timestamp(p['attempted_at'])
+        if p['count'] and (p['season'] is None or p['checked_at'] is None):raise ValueError('Schedule without verified year/check')
+        if p['count']!=sum(c['port']==p['code'] for c in data['calls']):raise ValueError('Port count disagrees with rows')
+    for c in data['calls']:
+        d=date.fromisoformat(c['date'])
+        if c['port'] not in ports or d.year!=ports[c['port']]['season'] or not c['ship']:raise ValueError('Call year does not match its own port schedule')
+        if c.get('url'):trusted(c['url'])
+        for key in ('arrival','departure'):
+            if c[key] is not None and not CLOCK.fullmatch(c[key]):raise ValueError('Invalid call time')
+    expected=sorted({p['season'] for p in ports.values() if p['count']})
+    if data['seasons']!=expected:raise ValueError('Season list disagrees with verified port coverage')
+    if data['checked_at']!=min(p['checked_at'] for p in ports.values() if p['count']):raise ValueError('Overall check must be the oldest available schedule check')
+    return data
+
+def identify(rows,entry):
+    unique={}
+    for row in sorted(rows,key=lambda c:(c['date'],c['ship'],c['arrival'] or '',c['departure'] or '')):
+        key=row['port']+'|'+row['date']+'|'+row['ship']
+        unique[key]=unique.get(key,0)+1
+        row['id']=hashlib.sha256((key+'|'+str(unique[key])).encode()).hexdigest()[:20]
+        for field in ('arrival','departure'):
+            value=row[field]
+            if value is None:row[field+'_at']=None
+            else:
+                minutes=int(value[:2])*60+int(value[3:])
+                local=datetime.combine(date.fromisoformat(row['date']),datetime.min.time())+timedelta(minutes=minutes)
+                row[field+'_at']=local.replace(tzinfo=ZoneInfo(entry['timezone'])).astimezone(timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z')
+    return rows
+
+def schedule_signature(ports):
+    return [{k:p.get(k) for k in ('code','name','season','url','edition','sha256','count')} for p in ports]
+
 def refresh(root=ROOT,fetch=read_url,now=None):
     config=json.loads((root/'config/ports.json').read_text())
-    if config['schedule_index']!='https://claalaska.com/?page_id=1250':raise ValueError('Review any replacement source index')
-    robot=RobotFileParser();robot.parse(fetch('https://claalaska.com/robots.txt').decode().splitlines())
-    if not robot.can_fetch(AGENT,config['schedule_index']):raise ValueError('Source does not permit this crawler')
-    html=fetch(config['schedule_index']).decode()
-    calls=[];ports=[]
+    path=root/'web/data/index.json';original=json.loads(path.read_text()) if path.exists() else None
+    old=validate_public(original) if original else None
+    oldports={p['code']:p for p in old['ports']} if old else {}
+    cache={};robots={}
+    def get(url):
+        trusted(url)
+        if url not in cache:
+            try:cache[url]=fetch(url)
+            except (OSError,ValueError) as error:cache[url]=error
+        if isinstance(cache[url],Exception):raise cache[url]
+        return cache[url]
+    def allowed(url):
+        trusted(url);parts=urlsplit(url);origin=parts.scheme+'://'+parts.netloc
+        if origin not in robots:
+            parser=RobotFileParser()
+            try:parser.parse(get(origin+'/robots.txt').decode().splitlines());robots[origin]=parser
+            except HTTPError as error:
+                if error.code==404:parser.parse([]);robots[origin]=parser
+                else:robots[origin]=error
+            except (OSError,ValueError) as error:robots[origin]=error
+        if isinstance(robots[origin],Exception):raise robots[origin]
+        if not robots[origin].can_fetch(AGENT,url):raise ValueError('Official robots policy does not permit this source')
+        return get(url)
+    ports=[];calls=[]
     for entry in config['ports']:
-        url=source_url(html,entry['code'],config['season'])
-        if not robot.can_fetch(AGENT,url):raise ValueError('Source disallows calendar collection')
-        raw=fetch(url);edition,rows=parse_pdf(raw,entry['code'],config['season'])
-        if len(rows)<entry['minimum_calls']:raise ValueError('Incomplete calendar for '+entry['code'])
-        for row in rows:
-            for field in ('arrival','departure'):
-                value=row[field]
-                if value is None:row[field+'_at']=None
-                else:
-                    minutes=int(value[:2])*60+int(value[3:])
-                    local=datetime.combine(date.fromisoformat(row['date']),datetime.min.time())+timedelta(minutes=minutes)
-                    row[field+'_at']=local.replace(tzinfo=ZoneInfo(entry['timezone'])).astimezone(timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z')
-        ports.append({k:entry[k] for k in ('code','name','timezone')}|{'url':url,'edition':edition,'sha256':hashlib.sha256(raw).hexdigest(),'count':len(rows)})
-        calls.extend(rows)
-    checked=now or datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z')
-    path=root/'web/data/index.json';old=json.loads(path.read_text()) if path.exists() else None
-    if old and config['season']==old['season']:
-        for port in ports:
-            previous=sum(c['port']==port['code'] for c in old['calls'])
-            if port['count']<previous*.85:raise ValueError('Unexpected schedule loss; retain previous capture')
+        code=entry['code'];prior=oldports.get(code);rows=[]
+        base={k:entry[k] for k in ('code','name','timezone','region')}
+        url=entry.get('url') or entry['index']
+        try:
+            if entry['adapter']=='claa':
+                html=allowed(entry['index']).decode();url=source_url(html,code,entry['season'])
+                raw=allowed(url);edition,rows=parse_pdf(raw,code,entry['season']);season=entry['season']
+            elif entry['adapter']=='maritime_pdf':
+                html=allowed(entry['index']).decode();url=discover_pdf(html,code)
+                raw=allowed(url);season,edition,rows=parse_marine_pdf(raw,code)
+            elif entry['adapter']=='html':
+                raw=allowed(url);season,edition,rows=parse_port_html(raw,code)
+            else:raise ValueError('Unknown source adapter')
+            if len(rows)<entry['minimum_calls']:raise ValueError('Incomplete published schedule')
+            if prior and prior['season']==season and len(rows)<prior['count']*.85:raise ValueError('Unexpected schedule loss; previous rows retained for review')
+            identify(rows,entry)
+            checked=now or datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z')
+            p=base|{'url':url,'season':season,'edition':edition,'sha256':hashlib.sha256(raw).hexdigest(),'count':len(rows),'status':'ok','checked_at':checked,'attempted_at':checked,'availability_checked_at':checked,'message':''}
+        except (OSError,ValueError,KeyError,RuntimeError) as error:
+            checked=now or datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z')
+            pending=isinstance(error,PendingSchedule)
+            message=('Published schedule could not be parsed.' if isinstance(error,RuntimeError) else str(error)) if isinstance(error,(ValueError,RuntimeError)) else ('Official source returned HTTP '+str(error.code)+'.' if isinstance(error,HTTPError) else 'Official source could not be reached.')
+            if prior and prior['count']:
+                p=deepcopy(prior)|base|{'status':'retained','attempted_at':checked,'message':message}
+                rows=[deepcopy(c) for c in old['calls'] if c['port']==code]
+                if pending:p['availability_checked_at']=checked
+            else:
+                p=base|{'url':url,'season':None,'edition':None,'sha256':None,'count':0,'status':'pending' if pending else 'unavailable','checked_at':None,'attempted_at':checked,'availability_checked_at':checked if pending else None,'message':message}
+            print(code+': '+p['status']+' — '+message)
+        ports.append(p);calls.extend(rows)
+    if not calls:raise ValueError('No valid schedule is available; existing published files preserved')
+    attempted=now or datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z')
+    checked=min(p['checked_at'] for p in ports if p['count'])
+    seasons=sorted({p['season'] for p in ports if p['count']})
     history=old.get('history',[]) if old else []
-    changes=(differences(old['calls'],calls,checked) if old else [])+(old.get('changes',[]) if old else [])
+    changes=(differences(old['calls'],calls,attempted) if old else [])+(old.get('changes',[]) if old else [])
     archive=None
-    if old and (old['calls']!=calls or old['ports']!=ports or old['season']!=config['season']):
-        name='history/'+old['checked_at'].replace(':','').replace('-','')+'.json'
-        prior={k:v for k,v in old.items() if k!='history'};prior['history']=[]
+    if old and (old['calls']!=calls or schedule_signature(old['ports'])!=schedule_signature(ports)):
+        name='history/'+old['attempted_at'].replace(':','').replace('-','')+'.json'
+        prior=deepcopy(old);prior['history']=[]
         archive=(name,json.dumps(prior,ensure_ascii=False,separators=(',',':'))+'\n')
-        history=[{'path':name,'checked_at':old['checked_at'],'season':old['season'],'count':len(old['calls']),'ports':[p['name'] for p in old['ports']]}]+history
-    capture={'schema':1,'season':config['season'],'checked_at':checked,'baseline_at':old['baseline_at'] if old else checked,'ports':ports,'calls':calls,'changes':changes[:100],'history':history[:config['history_limit']]}
+        history=[{'path':name,'checked_at':old['checked_at'],'seasons':old['seasons'],'count':len(old['calls']),'ports':[p['name'] for p in old['ports'] if p['count']]}]+history
+    capture={'schema':2,'seasons':seasons,'checked_at':checked,'attempted_at':attempted,'baseline_at':old['baseline_at'] if old else attempted,'ports':ports,'calls':calls,'changes':changes[:100],'history':history[:config['history_limit']]}
     validate_public(capture)
     payload=(json.dumps(capture,ensure_ascii=False,separators=(',',':'))+'\n').encode()
-    status={'checked_at':checked,'count':len(calls),'port_count':len(ports),'season':config['season'],'sha256':hashlib.sha256(payload).hexdigest()}
+    failed=sum(p['status'] in ('unavailable','retained') for p in ports)
+    pending=sum(p['status']=='pending' for p in ports)
+    status={'checked_at':checked,'attempted_at':attempted,'state':'partial' if failed or pending else 'ok','failed_count':failed,'pending_count':pending,'count':len(calls),'port_count':sum(p['count']>0 for p in ports),'configured_port_count':len(ports),'successful_count':sum(p['status']=='ok' for p in ports),'seasons':seasons,'sha256':hashlib.sha256(payload).hexdigest(),'ports':[{k:p[k] for k in ('code','season','count','status','checked_at','attempted_at')} for p in ports]}
     path.parent.mkdir(parents=True,exist_ok=True)
     with tempfile.TemporaryDirectory(dir=path.parent) as directory:
         staged=Path(directory);(staged/'index.json').write_bytes(payload);(staged/'status.json').write_text(json.dumps(status,indent=2)+'\n')
@@ -164,6 +251,7 @@ def refresh(root=ROOT,fetch=read_url,now=None):
     keep={h['path'] for h in capture['history']}
     for file in (path.parent/'history').glob('*.json'):
         if 'history/'+file.name not in keep:file.unlink()
-    print('Checked '+str(len(calls))+' schedule entries across '+str(len(ports))+' ports at '+checked)
+    print('Published '+str(len(calls))+' schedule entries; '+str(failed)+' unavailable/retained and '+str(pending)+' pending sources.')
+    return status
 
 if __name__=='__main__':refresh()
