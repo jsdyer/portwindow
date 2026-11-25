@@ -56,7 +56,7 @@ function details(){
 }
 function selectCapture(value){
  data=value;const previous=$('port').value;const fragment=document.createDocumentFragment();for(const p of data.ports){const option=node('option',p.name);option.value=p.code;fragment.append(option);}$('port').replaceChildren(fragment);if(data.ports.some(p=>p.code===previous))$('port').value=previous;
- $('port').disabled=false;details();reset();
+ $('port').disabled=false;$('load').disabled=false;details();reset();
 }
 function reset(){$('ship').value='';$('from').value='';$('to').value='';$('favourites-only').checked=false;limit=60;render();say('Showing all dates in this capture.');}
 function checkedCapture(value){if(value.schema!==1||!Array.isArray(value.calls)||!value.calls.length||!Array.isArray(value.ports)||!Array.isArray(value.changes)||!Number.isFinite(Date.parse(value.checked_at)))throw new Error('Invalid schedule capture');return value;}

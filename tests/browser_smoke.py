@@ -39,8 +39,10 @@ def main():
                 expect(page.locator('.estimate')).to_contain_text('No usable time')
                 page.locator('#after').fill('60');page.locator('#before').fill('90')
                 with page.expect_download() as event:page.locator('#export').click()
-                calendar=Path(event.value.path()).read_text()
+                calendar=Path(event.value.path()).read_text().replace('\n ','')
                 assert 'BEGIN:VEVENT' in calendar and 'DTSTART:' in calendar and 'Not an all-aboard' in calendar
+                assert 'UID:'+sample['id']+'@portwindow.coolcode.ca' in calendar
+                assert 'DTSTART:'+sample['arrival_at'].replace('-','').replace(':','') in calendar
                 page.locator('#tab-calendar').click()
                 expect(page.locator('#days .day-card')).to_have_count(1)
                 page.get_by_role('button',name='View this day').click()
